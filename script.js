@@ -1,41 +1,35 @@
 document.addEventListener('DOMContentLoaded', function() {
-  var modal = document.getElementById('modal');
-  var modalImg = document.getElementById('modal-img');
-  var captionText = document.getElementById('caption');
-  var closeBtn = document.getElementsByClassName('close')[0];
-  var prevBtn = document.getElementsByClassName('prev')[0];
-  var nextBtn = document.getElementsByClassName('next')[0];
-  var currentIndex = 0;
+  var slideIndex = 0;
+  var slides = document.querySelector('.gallery-slide');
   var images = document.querySelectorAll('.gallery img');
+  var prevBtn = document.querySelector('.prev');
+  var nextBtn = document.querySelector('.next');
 
-  images.forEach((img, index) => {
-    img.addEventListener('click', function() {
-      modal.style.display = 'block';
-      modalImg.src = this.src;
-      captionText.innerHTML = this.alt;
-      currentIndex = index;
-    });
-  });
-
-  closeBtn.addEventListener('click', function() {
-    modal.style.display = 'none';
-  });
+  function showSlide(index) {
+    if (index >= images.length) {
+      slideIndex = 0;
+    } else if (index < 0) {
+      slideIndex = images.length - 1;
+    } else {
+      slideIndex = index;
+    }
+    slides.style.transform = 'translateX(' + (-slideIndex * 100) + '%)';
+  }
 
   prevBtn.addEventListener('click', function() {
-    currentIndex = (currentIndex === 0) ? images.length - 1 : currentIndex - 1;
-    modalImg.src = images[currentIndex].src;
-    captionText.innerHTML = images[currentIndex].alt;
+    showSlide(slideIndex - 1);
   });
 
   nextBtn.addEventListener('click', function() {
-    currentIndex = (currentIndex === images.length - 1) ? 0 : currentIndex + 1;
-    modalImg.src = images[currentIndex].src;
-    captionText.innerHTML = images[currentIndex].alt;
+    showSlide(slideIndex + 1);
   });
-  
-  window.addEventListener('click', function(event) {
-    if (event.target === modal) {
-      modal.style.display = 'none';
-    }
-  });
+
+  // Автоматическое переключение слайдов каждые 5 секунд
+  setInterval(function() {
+    showSlide(slideIndex + 1);
+  }, 5000);
+
+  // Показ первого слайда
+  showSlide(slideIndex);
 });
+
