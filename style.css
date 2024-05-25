@@ -24,9 +24,10 @@ header h1 {
   max-width: 80%;
   margin: 40px auto;
   overflow: hidden;
-  border: 10px solid #fff; /* Добавим белую рамку */
+  border: 5px solid #555; /* Изменим цвет рамки на серый */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавим тень для красивого эффекта */
   border-radius: 10px; /* Закруглим углы рамки */
+  background-color: #fff; /* Добавим белый фон */
 }
 
 .gallery-slide {
@@ -37,7 +38,7 @@ header h1 {
 .gallery img {
   width: 100%;
   display: block;
-  border-radius: 10px; /* Закруглим углы изображений */
+  border-radius: 5px; /* Закруглим углы изображений */
 }
 
 .prev, .next {
@@ -52,14 +53,16 @@ header h1 {
   font-size: 20px;
   transition: 0.3s;
   user-select: none;
+  background-color: rgba(0, 0, 0, 0.5); /* Сделаем фон кнопок слегка прозрачным */
+  border-radius: 50%; /* Закруглим кнопки */
 }
 
 .prev {
-  left: 0;
+  left: 10px; /* Сдвинем кнопку влево */
 }
 
 .next {
-  right: 0;
+  right: 10px; /* Сдвинем кнопку вправо */
 }
 
 .prev:hover, .next:hover {
@@ -71,8 +74,8 @@ footer {
   background-color: #333;
   color: #fff;
   padding: 10px;
+  margin-top: 25px;
   text-align: center;
-  margin-top: 20px;
 }
 
 footer p {
