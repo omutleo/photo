@@ -22,8 +22,11 @@ header h1 {
 .gallery {
   position: relative;
   max-width: 80%;
-  margin: auto;
+  margin: 40px auto;
   overflow: hidden;
+  border: 10px solid #fff; /* Добавим белую рамку */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавим тень для красивого эффекта */
+  border-radius: 10px; /* Закруглим углы рамки */
 }
 
 .gallery-slide {
@@ -34,6 +37,7 @@ header h1 {
 .gallery img {
   width: 100%;
   display: block;
+  border-radius: 10px; /* Закруглим углы изображений */
 }
 
 .prev, .next {
