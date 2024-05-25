@@ -1,4 +1,4 @@
- document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
   // Создаем сцену
   const scene = new THREE.Scene();
   
@@ -9,6 +9,7 @@
   // Создаем рендерер
   const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(400, 400);
+  renderer.setClearColor(0x000000); // Черный фон
   document.getElementById('cube-container').appendChild(renderer.domElement);
   
   // Создаем геометрию куба
