@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+ document.addEventListener('DOMContentLoaded', function () {
   // Создаем сцену
   const scene = new THREE.Scene();
   
@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
   camera.position.z = 5;
   
   // Создаем рендерер
-  const renderer = new THREE.WebGLRenderer();
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setSize(400, 400);
   document.getElementById('cube-container').appendChild(renderer.domElement);
   
@@ -27,6 +27,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // Создаем куб
   const cube = new THREE.Mesh(geometry, materials);
   scene.add(cube);
+  
+  // Добавляем освещение
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  scene.add(ambientLight);
+  
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+  directionalLight.position.set(1, 1, 1).normalize();
+  scene.add(directionalLight);
   
   // Добавляем управление кубом
   const controls = new THREE.OrbitControls(camera, renderer.domElement);
