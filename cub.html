@@ -42,43 +42,14 @@
       });
 
       // Создаем куб и применяем материалы к граням
-      const faceColors = new Array(6).fill(new BABYLON.Color4(1, 1, 1, 1)); // Белый цвет для каждой грани
-      const options = {
-        size: 1,
-        faceColors,
-        faceUV: materials.map(() => new BABYLON.Vector4(0, 0, 1, 1)) // Однородные UV-координаты для каждой грани
-      };
+      const box = BABYLON.MeshBuilder.CreateBox('box', { size: 2 }, scene);
+      box.material = new BABYLON.MultiMaterial('multi', scene);
 
-      const box = BABYLON.MeshBuilder.CreateBox('box', options, scene);
       box.subMeshes = [];
       for (let i = 0; i < 6; i++) {
         box.subMeshes.push(new BABYLON.SubMesh(i, 0, box.getTotalVertices(), i * 6, 6, box));
+        box.material.subMaterials.push(materials[i]);
       }
-
-      materials.forEach((material, index) => {
-        box.material.subMaterials[index] = material;
-      });
-
-      // Массив ссылок для каждой грани
-      const links = [
-        'https://link1.com',
-        'https://link2.com',
-        'https://link3.com',
-        'https://link4.com',
-        'https://link5.com',
-        'https://link6.com'
-      ];
-
-      // Обработка кликов по кубу
-      window.addEventListener('click', function (event) {
-        const pickResult = scene.pick(scene.pointerX, scene.pointerY);
-        if (pickResult.hit) {
-          const pickedFace = pickResult.subMeshId;
-          if (links[pickedFace]) {
-            window.open(links[pickedFace], '_blank');
-          }
-        }
-      });
 
       // Запускаем рендеринг
       engine.runRenderLoop(function () {
