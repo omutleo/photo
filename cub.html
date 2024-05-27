@@ -25,20 +25,67 @@
       // Добавляем свет
       const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
       
+      // Создаем материалы с текстурами для граней куба
+      const faceUrls = [
+        'pic.jpg', // грань 1
+        'pic2.jpg', // грань 2
+        'pic3.jpg', // грань 3
+        'pic4.jpg', // грань 4
+        'pic5.jpg', // грань 5
+        'pic6.jpg'  // грань 6
+      ];
+
+      const materials = faceUrls.map(url => {
+        const material = new BABYLON.StandardMaterial('material', scene);
+        material.diffuseTexture = new BABYLON.Texture(url, scene);
+        return material;
+      });
+
       // Создаем куб
-      const box = BABYLON.MeshBuilder.CreateBox('box', { size: 1 }, scene);
-      
+      const faceColors = new Array(6).fill(new BABYLON.Color4(1, 1, 1, 1)); // Белый цвет для каждой грани
+      const options = {
+        size: 1,
+        faceColors,
+        faceUV: materials.map((_, index) => new BABYLON.Vector4(0, 0, 1, 1)) // Однородные UV-координаты для каждой грани
+      };
+      const box = BABYLON.MeshBuilder.CreateBox('box', options, scene);
+      materials.forEach((material, index) => {
+        box.material.subMaterials[index] = material;
+      });
+
+      // Массив ссылок для каждой грани
+      const links = [
+        'https://link1.com',
+        'https://link2.com',
+        'https://link3.com',
+        'https://link4.com',
+        'https://link5.com',
+        'https://link6.com'
+      ];
+
+      // Обработка кликов по кубу
+      window.addEventListener('click', function (event) {
+        const pickResult = scene.pick(scene.pointerX, scene.pointerY);
+        if (pickResult.hit) {
+          const pickedFace = pickResult.faceId;
+          const faceIndex = Math.floor(pickedFace / 2); // Каждая грань состоит из двух треугольников
+          if (links[faceIndex]) {
+            window.open(links[faceIndex], '_blank');
+          }
+        }
+      });
+
       // Запускаем рендеринг
       engine.runRenderLoop(function () {
         scene.render();
       });
-      
+
       // Изменяем размер при изменении размера окна
       window.addEventListener('resize', function () {
         engine.resize();
       });
     });
   </script>
-  <a href="index.html">Назад</a>
-</body>
+  <a href="index.html">Назад</a> 
+</body> 
 </html>
