@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -14,17 +14,17 @@
       // Создаем Babylon.js 3D движок
       const canvas = document.getElementById('renderCanvas');
       const engine = new BABYLON.Engine(canvas, true);
-      
+
       // Создаем сцену
       const scene = new BABYLON.Scene(engine);
-      
+
       // Создаем камеру
-      const camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 2, 2, BABYLON.Vector3.Zero(), scene);
+      const camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 4, BABYLON.Vector3.Zero(), scene);
       camera.attachControl(canvas, true);
-      
+
       // Добавляем свет
       const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
-      
+
       // Создаем материалы с текстурами для граней куба
       const faceUrls = [
         'pic.jpg', // грань 1
@@ -36,19 +36,25 @@
       ];
 
       const materials = faceUrls.map(url => {
-        const material = new BABYLON.StandardMaterial('material', scene);
+        const material = new BABYLON.StandardMaterial(url, scene);
         material.diffuseTexture = new BABYLON.Texture(url, scene);
         return material;
       });
 
-      // Создаем куб
+      // Создаем куб и применяем материалы к граням
       const faceColors = new Array(6).fill(new BABYLON.Color4(1, 1, 1, 1)); // Белый цвет для каждой грани
       const options = {
         size: 1,
         faceColors,
-        faceUV: materials.map((_, index) => new BABYLON.Vector4(0, 0, 1, 1)) // Однородные UV-координаты для каждой грани
+        faceUV: materials.map(() => new BABYLON.Vector4(0, 0, 1, 1)) // Однородные UV-координаты для каждой грани
       };
+
       const box = BABYLON.MeshBuilder.CreateBox('box', options, scene);
+      box.subMeshes = [];
+      for (let i = 0; i < 6; i++) {
+        box.subMeshes.push(new BABYLON.SubMesh(i, 0, box.getTotalVertices(), i * 6, 6, box));
+      }
+
       materials.forEach((material, index) => {
         box.material.subMaterials[index] = material;
       });
@@ -67,10 +73,9 @@
       window.addEventListener('click', function (event) {
         const pickResult = scene.pick(scene.pointerX, scene.pointerY);
         if (pickResult.hit) {
-          const pickedFace = pickResult.faceId;
-          const faceIndex = Math.floor(pickedFace / 2); // Каждая грань состоит из двух треугольников
-          if (links[faceIndex]) {
-            window.open(links[faceIndex], '_blank');
+          const pickedFace = pickResult.subMeshId;
+          if (links[pickedFace]) {
+            window.open(links[pickedFace], '_blank');
           }
         }
       });
@@ -86,6 +91,5 @@
       });
     });
   </script>
-  <a href="index.html">Назад</a> 
-</body> 
+</body>
 </html>
