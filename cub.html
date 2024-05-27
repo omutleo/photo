@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -27,7 +27,7 @@
 
       // Создаем материалы с текстурами для граней куба
       const faceUrls = [
-        'pic.jpg', // грань 1
+        'pic.jpg',  // грань 1
         'pic2.jpg', // грань 2
         'pic3.jpg', // грань 3
         'pic4.jpg', // грань 4
@@ -35,9 +35,16 @@
         'pic6.jpg'  // грань 6
       ];
 
-      const materials = faceUrls.map(url => {
-        const material = new BABYLON.StandardMaterial(url, scene);
-        material.diffuseTexture = new BABYLON.Texture(url, scene);
+      const materials = faceUrls.map((url, index) => {
+        const material = new BABYLON.StandardMaterial('material' + index, scene);
+        material.diffuseTexture = new BABYLON.Texture(url, scene, false, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, 
+          () => {
+            console.log('Texture loaded successfully: ' + url);
+          }, 
+          (message, exception) => {
+            console.error('Error loading texture: ' + url, message, exception);
+          }
+        );
         return material;
       });
 
