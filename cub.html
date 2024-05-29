@@ -1,14 +1,13 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Куб с Babylon.js</title>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
-  <script src="https://cdn.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
 </head>
-<body>
-  <canvas id="renderCanvas" style="width: 100%; height: 400px;"></canvas>
+<body style="margin: 0; background-color: white;">
+  <canvas id="renderCanvas" style="width: 100vw; height: 100vh;"></canvas>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Создаем Babylon.js 3D движок
@@ -17,13 +16,15 @@
 
       // Создаем сцену
       const scene = new BABYLON.Scene(engine);
+      scene.clearColor = new BABYLON.Color3(1, 1, 1); // Белый фон
 
       // Создаем камеру
-      const camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 2, Math.PI / 4, 4, BABYLON.Vector3.Zero(), scene);
+      const camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 4, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
       camera.attachControl(canvas, true);
 
       // Добавляем свет
       const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
+      light.intensity = 0.9;
 
       // Создаем материалы с текстурами для граней куба
       const faceUrls = [
@@ -37,14 +38,8 @@
 
       const materials = faceUrls.map((url, index) => {
         const material = new BABYLON.StandardMaterial('material' + index, scene);
-        material.diffuseTexture = new BABYLON.Texture(url, scene, false, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE, 
-          () => {
-            console.log('Texture loaded successfully: ' + url);
-          }, 
-          (message, exception) => {
-            console.error('Error loading texture: ' + url, message, exception);
-          }
-        );
+        material.diffuseTexture = new BABYLON.Texture(url, scene);
+        material.specularColor = new BABYLON.Color3(0, 0, 0);
         return material;
       });
 
