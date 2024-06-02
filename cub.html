@@ -123,6 +123,18 @@
         button.color = "black";
         button.fontSize = 48;
         button.background = "white";
+        button.alpha = 0.5; // Устанавливаем прозрачность фона
+
+        // Убираем фон у кнопки и оставляем прозрачность
+        button.thickness = 0;
+        button.background = "transparent";
+        
+        const textBlock = new BABYLON.GUI.TextBlock();
+        textBlock.text = text;
+        textBlock.color = "black";
+        textBlock.fontSize = 48;
+        button.addControl(textBlock);
+
         button.onPointerUpObservable.add(function() {
           window.open(faceLinks[index], "_blank");
         });
