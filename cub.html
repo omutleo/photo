@@ -117,28 +117,23 @@
         }
 
         const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-        const button = BABYLON.GUI.Button.CreateSimpleButton('button' + index, text);
-        button.width = "1";
-        button.height = "0.4";
-        button.color = "black";
-        button.fontSize = 48;
-        button.background = "white";
-        button.alpha = 0.5; // Устанавливаем прозрачность фона
-
-        // Убираем фон у кнопки и оставляем прозрачность
-        button.thickness = 0;
-        button.background = "transparent";
-        
         const textBlock = new BABYLON.GUI.TextBlock();
         textBlock.text = text;
         textBlock.color = "black";
         textBlock.fontSize = 48;
-        button.addControl(textBlock);
 
-        button.onPointerUpObservable.add(function() {
+        // Создаем контейнер для текстового блока
+        const rect = new BABYLON.GUI.Rectangle();
+        rect.width = "1";
+        rect.height = "0.4";
+        rect.thickness = 0;
+        rect.background = "transparent";
+        rect.addControl(textBlock);
+        rect.onPointerUpObservable.add(function() {
           window.open(faceLinks[index], "_blank");
         });
-        advancedTexture.addControl(button);
+
+        advancedTexture.addControl(rect);
       });
 
       // Запускаем рендеринг
