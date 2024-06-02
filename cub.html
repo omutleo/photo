@@ -129,7 +129,9 @@
         rect.thickness = 0;
         rect.background = "transparent";
         rect.addControl(textBlock);
-        rect.onPointerUpObservable.add(function() {
+
+        // Устанавливаем действие только на текст
+        textBlock.onPointerUpObservable.add(function() {
           window.open(faceLinks[index], "_blank");
         });
 
