@@ -78,8 +78,17 @@
         'Альбом 6'
       ];
 
+      const faceLinks = [
+        'https://photo-phi-six.vercel.app',
+        'https://photo-phi-six.vercel.app',
+        'https://photo-phi-six.vercel.app',
+        'https://photo-phi-six.vercel.app',
+        'https://photo-phi-six.vercel.app',
+        'https://photo-phi-six.vercel.app'
+      ];
+
       faceTexts.forEach((text, index) => {
-        const plane = BABYLON.MeshBuilder.CreatePlane('plane' + index, { size: 1.5 }, scene);
+        const plane = BABYLON.MeshBuilder.CreatePlane('plane' + index, { size: 2 }, scene);
         plane.parent = box;
         switch (index) {
           case 0:
@@ -107,11 +116,16 @@
         }
 
         const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-        const textBlock = new BABYLON.GUI.TextBlock();
-        textBlock.text = text;
-        textBlock.color = 'black';
-        textBlock.fontSize = 24;
-        advancedTexture.addControl(textBlock);
+        const button = BABYLON.GUI.Button.CreateSimpleButton('button' + index, text);
+        button.width = "1";
+        button.height = "0.4";
+        button.color = "black";
+        button.fontSize = 48;
+        button.background = "white";
+        button.onPointerUpObservable.add(function() {
+          window.open(faceLinks[index], "_blank");
+        });
+        advancedTexture.addControl(button);
       });
 
       // Запускаем рендеринг
