@@ -117,25 +117,17 @@
         }
 
         const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
-        const textBlock = new BABYLON.GUI.TextBlock();
-        textBlock.text = text;
-        textBlock.color = "black";
-        textBlock.fontSize = 48;
-
-        // Создаем контейнер для текстового блока
-        const rect = new BABYLON.GUI.Rectangle();
-        rect.width = "1";
-        rect.height = "0.4";
-        rect.thickness = 0;
-        rect.background = "transparent";
-        rect.addControl(textBlock);
-
-        // Устанавливаем действие только на текст
-        textBlock.onPointerUpObservable.add(function() {
+        const button = BABYLON.GUI.Button.CreateSimpleButton('button' + index, text);
+        button.width = "200px";
+        button.height = "100px";
+        button.color = "black";
+        button.background = "transparent";
+        button.fontSize = 48;
+        button.onPointerUpObservable.add(function() {
           window.open(faceLinks[index], "_blank");
         });
 
-        advancedTexture.addControl(rect);
+        advancedTexture.addControl(button);
       });
 
       // Запускаем рендеринг
