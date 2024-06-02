@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Куб с Babylon.js</title>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       overflow: hidden;
+      background-color: white;
     }
     #renderCanvas {
       width: 100vw;
@@ -76,24 +78,40 @@
         'Альбом 6'
       ];
 
-      const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
-
       faceTexts.forEach((text, index) => {
-        const plane = BABYLON.MeshBuilder.CreatePlane('plane' + index, { size: 1 }, scene);
+        const plane = BABYLON.MeshBuilder.CreatePlane('plane' + index, { size: 1.5 }, scene);
         plane.parent = box;
-        plane.position = new BABYLON.Vector3(
-          (index === 1 || index === 3) ? 0 : (index === 4 ? 1 : -1),
-          (index === 0 ? 1 : (index === 5 ? -1 : 0)),
-          (index === 2 ? 1 : (index === 3 ? -1 : 0))
-        );
+        switch (index) {
+          case 0:
+            plane.position = new BABYLON.Vector3(0, 0, -1);
+            break;
+          case 1:
+            plane.position = new BABYLON.Vector3(0, 0, 1);
+            break;
+          case 2:
+            plane.position = new BABYLON.Vector3(-1, 0, 0);
+            plane.rotation.y = Math.PI / 2;
+            break;
+          case 3:
+            plane.position = new BABYLON.Vector3(1, 0, 0);
+            plane.rotation.y = -Math.PI / 2;
+            break;
+          case 4:
+            plane.position = new BABYLON.Vector3(0, 1, 0);
+            plane.rotation.x = Math.PI / 2;
+            break;
+          case 5:
+            plane.position = new BABYLON.Vector3(0, -1, 0);
+            plane.rotation.x = -Math.PI / 2;
+            break;
+        }
 
+        const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
         const textBlock = new BABYLON.GUI.TextBlock();
         textBlock.text = text;
         textBlock.color = 'black';
         textBlock.fontSize = 24;
         advancedTexture.addControl(textBlock);
-        
-        textBlock.linkWithMesh(plane);
       });
 
       // Запускаем рендеринг
