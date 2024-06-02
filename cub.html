@@ -1,13 +1,24 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Куб с Babylon.js</title>
   <script src="https://cdn.babylonjs.com/babylon.js"></script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #renderCanvas {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
 </head>
-<body style="margin: 0; background-color: white;">
-  <canvas id="renderCanvas" style="width: 100vw; height: 100vh;"></canvas>
+<body>
+  <canvas id="renderCanvas"></canvas>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // Создаем Babylon.js 3D движок
@@ -38,7 +49,9 @@
 
       const materials = faceUrls.map((url, index) => {
         const material = new BABYLON.StandardMaterial('material' + index, scene);
-        material.diffuseTexture = new BABYLON.Texture(url, scene);
+        const texture = new BABYLON.Texture(url, scene);
+        texture.level = 1.5; // Увеличиваем яркость текстуры
+        material.diffuseTexture = texture;
         material.specularColor = new BABYLON.Color3(0, 0, 0);
         return material;
       });
@@ -52,6 +65,36 @@
         box.subMeshes.push(new BABYLON.SubMesh(i, 0, box.getTotalVertices(), i * 6, 6, box));
         box.material.subMaterials.push(materials[i]);
       }
+
+      // Добавляем текстовые метки по центру граней
+      const faceTexts = [
+        'Альбом',
+        'Альбом 2',
+        'Альбом 3',
+        'Альбом 4',
+        'Альбом 5',
+        'Альбом 6'
+      ];
+
+      const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI('UI');
+
+      faceTexts.forEach((text, index) => {
+        const plane = BABYLON.MeshBuilder.CreatePlane('plane' + index, { size: 1 }, scene);
+        plane.parent = box;
+        plane.position = new BABYLON.Vector3(
+          (index === 1 || index === 3) ? 0 : (index === 4 ? 1 : -1),
+          (index === 0 ? 1 : (index === 5 ? -1 : 0)),
+          (index === 2 ? 1 : (index === 3 ? -1 : 0))
+        );
+
+        const textBlock = new BABYLON.GUI.TextBlock();
+        textBlock.text = text;
+        textBlock.color = 'black';
+        textBlock.fontSize = 24;
+        advancedTexture.addControl(textBlock);
+        
+        textBlock.linkWithMesh(plane);
+      });
 
       // Запускаем рендеринг
       engine.runRenderLoop(function () {
