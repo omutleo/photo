@@ -46,7 +46,7 @@
         'pic3.jpg', // грань 3
         'pic4.jpg', // грань 4
         'pic5.jpg', // грань 5
-        'pic3.jpg'  // грань 6
+        'pic6.jpg'  // грань 6
       ];
 
       const materials = faceUrls.map((url, index) => {
@@ -115,13 +115,12 @@
             plane.rotation.x = -Math.PI / 2;
             break;
         }
-
-        const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
+const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
         const button = BABYLON.GUI.Button.CreateSimpleButton('button' + index, text);
         button.width = "200px";
         button.height = "100px";
         button.color = "black";
-        button.background = "transparent";
+        button.background = "rgba(255, 255, 255, 0.5)";
         button.fontSize = 48;
         button.onPointerUpObservable.add(function() {
           window.open(faceLinks[index], "_blank");
