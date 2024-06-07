@@ -23,23 +23,18 @@
   <canvas id="renderCanvas"></canvas>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      // Создаем Babylon.js 3D движок
       const canvas = document.getElementById('renderCanvas');
       const engine = new BABYLON.Engine(canvas, true);
 
-      // Создаем сцену
       const scene = new BABYLON.Scene(engine);
       scene.clearColor = new BABYLON.Color3(1, 1, 1); // Белый фон
 
-      // Создаем камеру
       const camera = new BABYLON.ArcRotateCamera('camera1', Math.PI / 4, Math.PI / 4, 5, BABYLON.Vector3.Zero(), scene);
       camera.attachControl(canvas, true);
 
-      // Добавляем свет
       const light = new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
       light.intensity = 0.9;
 
-      // Создаем материалы с текстурами для граней куба
       const faceUrls = [
         'pic.jpg',  // грань 1
         'pic2.jpg', // грань 2
@@ -51,14 +46,17 @@
 
       const materials = faceUrls.map((url, index) => {
         const material = new BABYLON.StandardMaterial('material' + index, scene);
-        const texture = new BABYLON.Texture(url, scene);
+        const texture = new BABYLON.Texture(url, scene, false, false, BABYLON.Texture.NEAREST_SAMPLINGMODE, () => {
+          console.log(Texture loaded: ${url});
+        }, (message, exception) => {
+          console.error(Failed to load texture: ${url}, message, exception);
+        });
         texture.level = 1.5; // Увеличиваем яркость текстуры
         material.diffuseTexture = texture;
         material.specularColor = new BABYLON.Color3(0, 0, 0);
         return material;
       });
 
-      // Создаем куб и применяем материалы к граням
       const box = BABYLON.MeshBuilder.CreateBox('box', { size: 2 }, scene);
       box.material = new BABYLON.MultiMaterial('multi', scene);
 
@@ -68,7 +66,6 @@
         box.material.subMaterials.push(materials[i]);
       }
 
-      // Добавляем текстовые метки по центру граней
       const faceTexts = [
         'Альбом',
         'Альбом 2',
@@ -93,7 +90,7 @@
 
         switch (index) {
           case 0:
-            plane.position = new BABYLON.Vector3(0, 0, -1.01); // Slightly in front to avoid z-fighting
+            plane.position = new BABYLON.Vector3(0, 0, -1.01);
             break;
           case 1:
             plane.position = new BABYLON.Vector3(0, 0, 1.01);
@@ -129,12 +126,10 @@ const advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateForMesh(plane);
         advancedTexture.addControl(button);
       });
 
-      // Запускаем рендеринг
       engine.runRenderLoop(function () {
         scene.render();
       });
 
-      // Изменяем размер при изменении размера окна
       window.addEventListener('resize', function () {
         engine.resize();
       });
