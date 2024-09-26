@@ -1,35 +1,44 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Семейный альбом</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/controls/OrbitControls.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Опросник для закупок</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>Семейный альбом</h1>
-    <p>Это страница представляет собой динамичный фотоальбом нашей семьи в формате фотогалереи.</p>
-  </header>
+    <div class="container">
+        <h1>Опросник для выявления потребностей</h1>
+        <form action="https://formspree.io/f/your-form-id" method="POST">
+            <div class="form-group">
+                <label for="name">1. Ваше ФИО и наименование отдела:</label>
+                <input type="text" id="name" name="ФИО и отдел" required>
+            </div>
 
-  <div class="gallery">
-    <div class="gallery-slide">
-      <img src="modal.png" alt="Фото 1">
-      <img src="poyav.png" alt="Фото 2">
-      <img src="svoystvo.jpg" alt="Фото 3">
+            <div class="form-group">
+                <label for="needs">2. Какие потребности не закрываете сейчас? (например, гайки, масло)</label>
+                <textarea id="needs" name="Незакрытые потребности" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="difficulties">3. С чем постоянно возникают сложности? (например, поставщик не привозит в срок)</label>
+                <textarea id="difficulties" name="Постоянные сложности" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="supplies">4. Какие расходные материалы мы могли бы поставлять на постоянной основе?</label>
+                <textarea id="supplies" name="Расходные материалы" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="additional">5. Какие прочие товары можем предложить? (например, хозяйственные средства)</label>
+                <textarea id="additional" name="Прочие товары" rows="3" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <button type="submit">Отправить</button>
+            </div>
+        </form>
     </div>
-    <a class="prev">&#10094;</a>
-    <a class="next">&#10095;</a>
-  </div>
-  <a href="cub.html"><p>Кубик 3D</p></a>
-  <!-- <div id="cube-container" style="width: 400px; height: 400px;"></div>
-  <script src="script1.js"></script> -->
-
-  <footer>
-    <p>&copy; Все права защищены Прорвич Леонид Сергеевич</p>
-  </footer>
 </body>
 </html>
