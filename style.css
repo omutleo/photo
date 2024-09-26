@@ -1,83 +1,66 @@
-/* Общие стили */
+/* Styles for the form */
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f5f5f5;
-  color: #333;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 20px;
 }
 
-/* Стили для шапки */
-header {
-  background-color: #f0f0f0;
-  padding: 20px;
-  text-align: center;
+.container {
+    background-color: #ffffff;
+    padding: 20px 40px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
 }
 
-header h1 {
-  margin-top: 0;
+h1 {
+    text-align: center;
+    color: #333;
 }
 
-/* Стили для фотогалереи */
-.gallery {
-  position: relative;
-  max-width: 80%;
-  margin: 40px auto;
-  overflow: hidden;
-  border: 5px solid #555; /* Изменим цвет рамки на серый */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Добавим тень для красивого эффекта */
-  border-radius: 10px; /* Закруглим углы рамки */
-  background-color: #fff; /* Добавим белый фон */
+.form-group {
+    margin-bottom: 15px;
 }
 
-.gallery-slide {
-  display: flex;
-  transition: transform 0.5s ease-in-out;
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.gallery img {
-  width: 100%;
-  display: block;
-  border-radius: 5px; /* Закруглим углы изображений */
+.form-group input, 
+.form-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
 }
 
-.prev, .next {
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  width: auto;
-  padding: 16px;
-  margin-top: -50px;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
-  transition: 0.3s;
-  user-select: none;
-  background-color: rgba(0, 0, 0, 0.5); /* Сделаем фон кнопок слегка прозрачным */
-  border-radius: 50%; /* Закруглим кнопки */
+.form-group input:focus, 
+.form-group textarea:focus {
+    border-color: #6c757d;
+    outline: none;
 }
 
-.prev {
-  left: 10px; /* Сдвинем кнопку влево */
+textarea {
+    resize: vertical;
 }
 
-.next {
-  right: 10px; /* Сдвинем кнопку вправо */
+button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-.prev:hover, .next:hover {
-  background-color: rgba(0,0,0,0.8);
-}
-
-/* Стили для подвала */
-footer {
-  background-color: #333;
-  color: #fff;
-  padding: 10px;
-  margin-top: 25px;
-  text-align: center;
-}
-
-footer p {
-  margin: 0;
+button:hover {
+    background-color: #0056b3;
 }
