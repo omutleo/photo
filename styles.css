@@ -1,8 +1,5 @@
 /* styles.css */
 
-/* =========================================
-   CSS VARIABLES & RESET
-   ========================================= */
 :root {
     --primary-orange: #FF6600;
     --primary-orange-hover: #e65c00;
@@ -35,15 +32,26 @@ body {
     display: none !important;
 }
 
-/* =========================================
-   LOGIN SCREEN
-   ========================================= */
+/* LOGIN SCREEN */
 #login-screen {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     background: linear-gradient(135deg, var(--dark-grey) 0%, var(--black) 100%);
+}
+
+.login-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--dark-grey) 0%, var(--black) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 .login-card {
@@ -78,6 +86,16 @@ body {
     color: var(--dark-grey);
     margin-bottom: 30px;
     font-weight: 700;
+}
+
+.login-hint {
+    margin-top: 20px;
+    color: var(--medium-grey);
+    font-size: 0.9rem;
+}
+
+.login-hint strong {
+    color: var(--primary-orange);
 }
 
 .form-group {
@@ -115,9 +133,7 @@ body {
     display: none;
 }
 
-/* =========================================
-   BUTTONS
-   ========================================= */
+/* BUTTONS */
 .btn {
     cursor: pointer;
     border: none;
@@ -172,9 +188,7 @@ body {
     background-color: rgba(255, 102, 0, 0.1);
 }
 
-/* =========================================
-   HEADER
-   ========================================= */
+/* HEADER */
 .main-header {
     background-color: var(--white);
     padding: 20px 0;
@@ -233,9 +247,7 @@ body {
     font-size: 1.1rem;
 }
 
-/* =========================================
-   MAIN CONTAINER
-   ========================================= */
+/* MAIN CONTAINER */
 .container {
     max-width: 1400px;
     margin: 0 auto;
@@ -257,9 +269,7 @@ body {
     font-weight: 700;
 }
 
-/* =========================================
-   STATS BAR
-   ========================================= */
+/* STATS BAR */
 .stats-bar {
     background: var(--white);
     padding: 25px 30px;
@@ -291,9 +301,7 @@ body {
     font-weight: 500;
 }
 
-/* =========================================
-   CATEGORIES GRID
-   ========================================= */
+/* CATEGORIES GRID */
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -342,9 +350,7 @@ body {
     font-weight: 500;
 }
 
-/* =========================================
-   CATEGORY VIEW
-   ========================================= */
+/* CATEGORY VIEW */
 .category-header {
     display: flex;
     align-items: center;
@@ -457,9 +463,7 @@ body {
     margin-bottom: 25px;
 }
 
-/* =========================================
-   FOOTER
-   ========================================= */
+/* FOOTER */
 .main-footer {
     text-align: center;
     padding: 30px 25px;
@@ -469,9 +473,7 @@ body {
     font-size: 0.95rem;
 }
 
-/* =========================================
-   RESPONSIVE DESIGN
-   ========================================= */
+/* RESPONSIVE */
 @media (max-width: 1024px) {
     .categories-grid {
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -536,9 +538,7 @@ body {
     }
 }
 
-/* =========================================
-   ANIMATIONS
-   ========================================= */
+/* ANIMATIONS */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -555,9 +555,7 @@ body {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* =========================================
-   SCROLLBAR STYLING
-   ========================================= */
+/* SCROLLBAR */
 ::-webkit-scrollbar {
     width: 12px;
 }
@@ -575,9 +573,7 @@ body {
     background: var(--primary-orange);
 }
 
-/* =========================================
-   FOCUS STATES FOR ACCESSIBILITY
-   ========================================= */
+/* FOCUS STATES */
 .category-card:focus,
 .btn:focus,
 .contact-btn:focus {
