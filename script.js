@@ -1,30 +1,53 @@
+// script.js - Основной функционал приложения
+
+// ============================================
+// STATE & DOM ELEMENTS
+// ============================================
 let currentCategory = null;
 let allSuppliers = [];
 
-// Login page elements
-const loginScreen = document.getElementById('login-screen');
-const loginForm = document.getElementById('login-form');
-const loginError = document.getElementById('login-error');
-
-// App page elements
-const appScreen = document.getElementById('app-screen');
-const logoutBtn = document.getElementById('logout-btn');
-const globalSearch = document.getElementById('global-search');
-const dashboardView = document.getElementById('dashboard-view');
-const categoryView = document.getElementById('category-view');
-const categoriesContainer = document.getElementById('categories-container');
-const suppliersContainer = document.getElementById('suppliers-container');
-const currentCategoryTitle = document.getElementById('current-category-title');
-const currentCategoryCount = document.getElementById('current-category-count');
-const backToDashboard = document.getElementById('back-to-dashboard');
-const totalSuppliersEl = document.getElementById('total-suppliers');
-const totalCategoriesEl = document.getElementById('total-categories');
+// DOM Elements
+let loginScreen = null;
+let loginForm = null;
+let loginError = null;
+let appScreen = null;
+let logoutBtn = null;
+let globalSearch = null;
+let dashboardView = null;
+let categoryView = null;
+let categoriesContainer = null;
+let suppliersContainer = null;
+let currentCategoryTitle = null;
+let currentCategoryCount = null;
+let backToDashboard = null;
+let totalSuppliersEl = null;
+let totalCategoriesEl = null;
+let loginModal = null;
+let loginFormModal = null;
+let loginErrorModal = null;
 
 // ============================================
 // INITIALIZATION
 // ============================================
-function init() {
-    // Build all suppliers array for global search
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize data
+    buildAllSuppliers();
+    
+    // Check which page we're on and initialize accordingly
+    loginScreen = document.getElementById('login-screen');
+    appScreen = document.getElementById('app-screen');
+    loginModal = document.getElementById('login-modal');
+    
+    if (loginScreen) {
+        // We're on login.html
+        initLoginPage();
+    } else if (appScreen) {
+        // We're on index.html
+        initAppPage();
+    }
+});
+
+function buildAllSuppliers() {
     Object.entries(database).forEach(([category, suppliers]) => {
         suppliers.forEach(supplier => {
             allSuppliers.push({
@@ -33,99 +56,202 @@ function init() {
             });
         });
     });
+}
 
-    // Update stats
-    totalSuppliersEl.textContent = allSuppliers.length;
-    totalCategoriesEl.textContent = Object.keys(database).length;
-
-    // Check if user is already logged in
-    checkAuth();
-
-    // Event listeners
+// ============================================
+// LOGIN PAGE INITIALIZATION
+// ============================================
+function initLoginPage() {
+    loginForm = document.getElementById('login-form');
+    loginError = document.getElementById('login-error');
+    
     if (loginForm) {
-        loginForm.addEventListener('submit', handleLogin);
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLogin();
+            return false;
+        });
     }
+    
+    // Check if already logged in
+    checkAuth();
+}
+
+// ============================================
+// APP PAGE INITIALIZATION
+// ============================================
+function initAppPage() {
+    // Get DOM elements
+    logoutBtn = document.getElementById('logout-btn');
+    globalSearch = document.getElementById('global-search');
+    dashboardView = document.getElementById('dashboard-view');
+    categoryView = document.getElementById('category-view');
+    categoriesContainer = document.getElementById('categories-container');
+    suppliersContainer = document.getElementById('suppliers-container');
+    currentCategoryTitle = document.getElementById('current-category-title');
+    currentCategoryCount = document.getElementById('current-category-count');
+    backToDashboard = document.getElementById('back-to-dashboard');
+    totalSuppliersEl = document.getElementById('total-suppliers');
+    totalCategoriesEl = document.getElementById('total-categories');
+    loginModal = document.getElementById('login-modal');
+    loginFormModal = document.getElementById('login-form-modal');
+    loginErrorModal = document.getElementById('login-error-modal');
+    
+    // Check authentication
+    const isLoggedIn = sessionStorage.getItem('isLoggedIn');
+    
+    if (isLoggedIn === 'true') {
+        showApp();
+    } else {
+        showLoginModal();
+    }
+    
+    // Setup event listeners
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
+    
     if (backToDashboard) {
         backToDashboard.addEventListener('click', showDashboard);
     }
+    
     if (globalSearch) {
         globalSearch.addEventListener('input', handleSearch);
+    }
+    
+    if (loginFormModal) {
+        loginFormModal.addEventListener('submit', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleLoginModal();
+            return false;
+        });
     }
 }
 
 // ============================================
-// AUTHENTICATION
+// AUTHENTICATION FUNCTIONS
 // ============================================
 function checkAuth() {
     const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     if (isLoggedIn === 'true' && loginScreen && appScreen) {
-        loginScreen.classList.add('hidden');
-        appScreen.classList.remove('hidden');
-        renderCategories();
-    } else if (loginScreen && appScreen) {
-        appScreen.classList.add('hidden');
-        loginScreen.classList.remove('hidden');
+        window.location.href = 'index.html';
     }
 }
 
-function handleLogin(e) {
-    e.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-
-    // Simple authentication (in production, use server-side auth)
+function handleLogin() {
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value.trim();
+    
+    console.log('Login attempt:', username, password);
+    
     if (username === 'admin' && password === 'admin') {
         sessionStorage.setItem('isLoggedIn', 'true');
-        loginScreen.classList.add('hidden');
-        appScreen.classList.remove('hidden');
-        renderCategories();
+        window.location.href = 'index.html';
     } else {
-        loginError.style.display = 'block';
-        setTimeout(() => {
-            loginError.style.display = 'none';
-        }, 3000);
+        if (loginError) {
+            loginError.style.display = 'block';
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 3000);
+        }
+    }
+}
+
+function handleLoginModal() {
+    const username = document.getElementById('username-modal').value.trim();
+    const password = document.getElementById('password-modal').value.trim();
+    
+    if (username === 'admin' && password === 'admin') {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        if (loginModal) {
+            loginModal.classList.add('hidden');
+        }
+        showApp();
+    } else {
+        if (loginErrorModal) {
+            loginErrorModal.style.display = 'block';
+            setTimeout(() => {
+                loginErrorModal.style.display = 'none';
+            }, 3000);
+        }
     }
 }
 
 function handleLogout() {
     sessionStorage.removeItem('isLoggedIn');
-    appScreen.classList.add('hidden');
-    loginScreen.classList.remove('hidden');
-    document.getElementById('username').value = '';
-    document.getElementById('password').value = '';
-    loginError.style.display = 'none';
-    globalSearch.value = '';
-    currentCategory = null;
+    window.location.href = 'login.html';
+}
+
+function showLoginModal() {
+    if (loginModal) {
+        loginModal.classList.remove('hidden');
+        if (appScreen) {
+            appScreen.classList.add('hidden');
+        }
+    }
 }
 
 // ============================================
-// NAVIGATION
+// APP DISPLAY FUNCTIONS
 // ============================================
+function showApp() {
+    if (loginModal) {
+        loginModal.classList.add('hidden');
+    }
+    if (appScreen) {
+        appScreen.classList.remove('hidden');
+    }
+    
+    // Update stats
+    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = allSuppliers.length;
+    }
+    if (totalCategoriesEl) {
+        totalCategoriesEl.textContent = Object.keys(database).length;
+    }
+    
+    // Render categories
+    renderCategories();
+}
+
 function showDashboard() {
     currentCategory = null;
-    dashboardView.classList.remove('hidden');
-    categoryView.classList.add('hidden');
-    globalSearch.value = '';
+    if (dashboardView) {
+        dashboardView.classList.remove('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.add('hidden');
+    }
+    if (globalSearch) {
+        globalSearch.value = '';
+    }
     renderCategories();
 }
 
 function showCategory(categoryName) {
     currentCategory = categoryName;
-    currentCategoryTitle.textContent = categoryName;
+    if (currentCategoryTitle) {
+        currentCategoryTitle.textContent = categoryName;
+    }
     const suppliers = database[categoryName];
-    currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    if (currentCategoryCount) {
+        currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
+    }
     
-    dashboardView.classList.add('hidden');
-    categoryView.classList.remove('hidden');
+    if (dashboardView) {
+        dashboardView.classList.add('hidden');
+    }
+    if (categoryView) {
+        categoryView.classList.remove('hidden');
+    }
     
     renderSuppliers(suppliers);
 }
 
 // ============================================
-// RENDERING
+// RENDERING FUNCTIONS
 // ============================================
 function renderCategories() {
     if (!categoriesContainer) return;
@@ -156,7 +282,7 @@ function renderSuppliers(suppliers) {
     
     suppliersContainer.innerHTML = '';
     
-    if (suppliers.length === 0) {
+    if (!suppliers || suppliers.length === 0) {
         suppliersContainer.innerHTML = `
             <div class="no-results">
                 <i class="fas fa-search"></i>
@@ -170,10 +296,11 @@ function renderSuppliers(suppliers) {
         const item = document.createElement('div');
         item.className = 'supplier-item';
         item.style.animationDelay = `${index * 0.05}s`;
-        item.innerHTML = `
-            <div class="supplier-name">${supplier.name}</div>
-            <div class="supplier-details">
-                ${supplier.contact ? `
+        
+        let detailsHTML = '';
+        
+        if (supplier.contact) {
+            detailsHTML += `
                 <div class="detail-item">
                     <i class="fas fa-user detail-icon"></i>
                     <div>
@@ -181,8 +308,11 @@ function renderSuppliers(suppliers) {
                         <div class="detail-text">${supplier.contact}</div>
                     </div>
                 </div>
-                ` : ''}
-                ${supplier.email ? `
+            `;
+        }
+        
+        if (supplier.email) {
+            detailsHTML += `
                 <div class="detail-item">
                     <i class="fas fa-envelope detail-icon"></i>
                     <div>
@@ -190,8 +320,11 @@ function renderSuppliers(suppliers) {
                         <div class="detail-text">${supplier.email}</div>
                     </div>
                 </div>
-                ` : ''}
-                ${supplier.products ? `
+            `;
+        }
+        
+        if (supplier.products) {
+            detailsHTML += `
                 <div class="detail-item">
                     <i class="fas fa-box detail-icon"></i>
                     <div>
@@ -199,8 +332,11 @@ function renderSuppliers(suppliers) {
                         <div class="detail-text">${supplier.products}</div>
                     </div>
                 </div>
-                ` : ''}
-                ${supplier.payment ? `
+            `;
+        }
+        
+        if (supplier.payment) {
+            detailsHTML += `
                 <div class="detail-item">
                     <i class="fas fa-credit-card detail-icon"></i>
                     <div>
@@ -208,16 +344,26 @@ function renderSuppliers(suppliers) {
                         <div class="detail-text">${supplier.payment}</div>
                     </div>
                 </div>
-                ` : ''}
+            `;
+        }
+        
+        const contactBtn = supplier.email ? 
+            `<a href="mailto:${supplier.email}" class="contact-btn"><i class="fas fa-envelope"></i> Написать</a>` : '';
+        
+        item.innerHTML = `
+            <div class="supplier-name">${supplier.name}</div>
+            <div class="supplier-details">
+                ${detailsHTML}
             </div>
-            ${supplier.email ? `<a href="mailto:${supplier.email}" class="contact-btn"><i class="fas fa-envelope"></i> Написать</a>` : ''}
+            ${contactBtn}
         `;
+        
         suppliersContainer.appendChild(item);
     });
 }
 
 // ============================================
-// SEARCH
+// SEARCH FUNCTION
 // ============================================
 function handleSearch(e) {
     const query = e.target.value.toLowerCase().trim();
@@ -232,7 +378,6 @@ function handleSearch(e) {
     }
 
     if (currentCategory) {
-        // Search within current category
         const filtered = database[currentCategory].filter(supplier => 
             supplier.name.toLowerCase().includes(query) ||
             (supplier.contact && supplier.contact.toLowerCase().includes(query)) ||
@@ -241,7 +386,6 @@ function handleSearch(e) {
         );
         renderSuppliers(filtered);
     } else {
-        // Global search - show results in category view
         const filtered = allSuppliers.filter(supplier => 
             supplier.name.toLowerCase().includes(query) ||
             (supplier.contact && supplier.contact.toLowerCase().includes(query)) ||
@@ -250,16 +394,18 @@ function handleSearch(e) {
             supplier.category.toLowerCase().includes(query)
         );
         
-        currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
-        currentCategoryCount.textContent = `${filtered.length} найдено`;
-        dashboardView.classList.add('hidden');
-        categoryView.classList.remove('hidden');
+        if (currentCategoryTitle) {
+            currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
+        }
+        if (currentCategoryCount) {
+            currentCategoryCount.textContent = `${filtered.length} найдено`;
+        }
+        if (dashboardView) {
+            dashboardView.classList.add('hidden');
+        }
+        if (categoryView) {
+            categoryView.classList.remove('hidden');
+        }
         renderSuppliers(filtered);
     }
 }
-
-// ============================================
-// START APP
-// ============================================
-document.addEventListener('DOMContentLoaded', init);
-```
