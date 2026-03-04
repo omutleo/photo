@@ -1,0 +1,289 @@
+/* =========================================
+   CSS VARIABLES & RESET
+   ========================================= */
+:root {
+    --primary-orange: #FF6600;
+    --primary-orange-hover: #e65c00;
+    --dark-grey: #333333;
+    --medium-grey: #666666;
+    --light-grey: #f4f4f4;
+    --border-grey: #e0e0e0;
+    --white: #ffffff;
+    --black: #000000;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 6px 12px rgba(0, 0, 0, 0.15);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--light-grey);
+    color: var(--dark-grey);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* =========================================
+   CONTAINER
+   ========================================= */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   HEADER
+   ========================================= */
+.header {
+    text-align: center;
+    padding: 40px 0;
+    border-bottom: 3px solid var(--primary-orange);
+    margin-bottom: 40px;
+}
+
+.logo {
+    font-size: 4rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.logo-h {
+    color: var(--black);
+}
+
+.logo-tec {
+    color: var(--primary-orange);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: var(--medium-grey);
+    font-weight: 400;
+}
+
+/* =========================================
+   MAIN CONTENT
+   ========================================= */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* =========================================
+   SEARCH SECTION
+   ========================================= */
+.search-section {
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    gap: 0;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.search-input {
+    flex: 1;
+    padding: 18px 25px;
+    font-size: 1.1rem;
+    border: 2px solid var(--border-grey);
+    border-radius: 50px 0 0 50px;
+    outline: none;
+    transition: var(--transition);
+    background-color: var(--white);
+}
+
+.search-input:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.2);
+}
+
+.search-input::placeholder {
+    color: var(--medium-grey);
+}
+
+.search-btn {
+    padding: 18px 30px;
+    background-color: var(--primary-orange);
+    border: 2px solid var(--primary-orange);
+    border-radius: 0 50px 50px 0;
+    cursor: pointer;
+    transition: var(--transition);
+    color: var(--white);
+    font-size: 1.2rem;
+}
+
+.search-btn:hover {
+    background-color: var(--primary-orange-hover);
+    border-color: var(--primary-orange-hover);
+}
+
+/* =========================================
+   CATEGORIES NAVIGATION
+   ========================================= */
+.categories-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1000px;
+}
+
+.category-btn {
+    display: block;
+    padding: 25px 20px;
+    background-color: var(--white);
+    color: var(--dark-grey);
+    text-decoration: none;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 2px solid var(--border-grey);
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.category-btn:hover {
+    border-color: var(--primary-orange);
+    background-color: var(--primary-orange);
+    color: var(--white);
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+.category-btn:active {
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   FOOTER
+   ========================================= */
+.footer {
+    text-align: center;
+    padding: 30px 0;
+    margin-top: 50px;
+    border-top: 1px solid var(--border-grey);
+    color: var(--medium-grey);
+    font-size: 0.9rem;
+}
+
+/* =========================================
+   RESPONSIVE DESIGN
+   ========================================= */
+@media (max-width: 1024px) {
+    .categories-nav {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .logo {
+        font-size: 3rem;
+    }
+
+    .categories-nav {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-input {
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+
+    .search-btn {
+        padding: 15px 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .logo {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1rem;
+    }
+
+    .categories-nav {
+        grid-template-columns: 1fr;
+    }
+
+    .category-btn {
+        padding: 20px;
+    }
+}
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header,
+.search-section,
+.categories-nav {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.search-section {
+    animation-delay: 0.2s;
+}
+
+.categories-nav {
+    animation-delay: 0.4s;
+}
+
+/* =========================================
+   FOCUS STATES FOR ACCESSIBILITY
+   ========================================= */
+.category-btn:focus {
+    outline: 3px solid var(--primary-orange);
+    outline-offset: 2px;
+}
+
+.search-input:focus {
+    outline: none;
+}
+
+/* =========================================
+   SCROLLBAR STYLING
+   ========================================= */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-grey);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--medium-grey);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-orange);
+}
