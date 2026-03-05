@@ -4,7 +4,7 @@
 // STATE & DOM ELEMENTS
 // ============================================
 let currentCategory = null;
-let allSuppliers = [];
+let allSuppliers = database;
 
 // DOM Elements
 let loginScreen = null;
@@ -30,9 +30,6 @@ let loginErrorModal = null;
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize data
-    buildAllSuppliers();
-    
     // Check which page we're on and initialize accordingly
     loginScreen = document.getElementById('login-screen');
     appScreen = document.getElementById('app-screen');
@@ -46,17 +43,6 @@ document.addEventListener('DOMContentLoaded', function() {
         initAppPage();
     }
 });
-
-function buildAllSuppliers() {
-    Object.entries(database).forEach(([category, suppliers]) => {
-        suppliers.forEach(supplier => {
-            allSuppliers.push({
-                ...supplier,
-                category: category
-            });
-        });
-    });
-}
 
 // ============================================
 // LOGIN PAGE INITIALIZATION
@@ -144,8 +130,6 @@ function handleLogin() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
     
-    console.log('Login attempt:', username, password);
-    
     if (username === 'admin' && password === 'admin') {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = 'index.html';
@@ -204,12 +188,15 @@ function showApp() {
         appScreen.classList.remove('hidden');
     }
     
+    // Get unique categories
+    const categories = getUniqueCategories();
+    
     // Update stats
     if (totalSuppliersEl) {
         totalSuppliersEl.textContent = allSuppliers.length;
     }
     if (totalCategoriesEl) {
-        totalCategoriesEl.textContent = Object.keys(database).length;
+        totalCategoriesEl.textContent = categories.length;
     }
     
     // Render categories
@@ -227,6 +214,16 @@ function showDashboard() {
     if (globalSearch) {
         globalSearch.value = '';
     }
+    
+    // Update stats
+    const categories = getUniqueCategories();
+    if (totalSuppliersEl) {
+        totalSuppliersEl.textContent = allSuppliers.length;
+    }
+    if (totalCategoriesEl) {
+        totalCategoriesEl.textContent = categories.length;
+    }
+    
     renderCategories();
 }
 
@@ -235,7 +232,7 @@ function showCategory(categoryName) {
     if (currentCategoryTitle) {
         currentCategoryTitle.textContent = categoryName;
     }
-    const suppliers = database[categoryName];
+    const suppliers = getSuppliersByCategory(categoryName);
     if (currentCategoryCount) {
         currentCategoryCount.textContent = `${suppliers.length} поставщиков`;
     }
@@ -251,6 +248,29 @@ function showCategory(categoryName) {
 }
 
 // ============================================
+// DATA FUNCTIONS
+// ============================================
+function getUniqueCategories() {
+    const categories = [...new Set(database.map(item => item.equipment))];
+    return categories.sort();
+}
+
+function getSuppliersByCategory(category) {
+    return database.filter(item => item.equipment === category);
+}
+
+function searchSuppliers(query) {
+    const lowerQuery = query.toLowerCase();
+    return database.filter(item => 
+        item.name.toLowerCase().includes(lowerQuery) ||
+        item.equipment.toLowerCase().includes(lowerQuery) ||
+        (item.contact && item.contact.toLowerCase().includes(lowerQuery)) ||
+        (item.email && item.email.toLowerCase().includes(lowerQuery)) ||
+        (item.comments && item.comments.toLowerCase().includes(lowerQuery))
+    );
+}
+
+// ============================================
 // RENDERING FUNCTIONS
 // ============================================
 function renderCategories() {
@@ -258,7 +278,10 @@ function renderCategories() {
     
     categoriesContainer.innerHTML = '';
     
-    Object.entries(database).forEach(([category, suppliers]) => {
+    const categories = getUniqueCategories();
+    
+    categories.forEach(category => {
+        const suppliers = getSuppliersByCategory(category);
         const card = document.createElement('div');
         card.className = 'category-card';
         card.innerHTML = `
@@ -304,7 +327,7 @@ function renderSuppliers(suppliers) {
                 <div class="detail-item">
                     <i class="fas fa-user detail-icon"></i>
                     <div>
-                        <div class="detail-label">Контакт</div>
+                        <div class="detail-label">Контактное лицо</div>
                         <div class="detail-text">${supplier.contact}</div>
                     </div>
                 </div>
@@ -316,32 +339,20 @@ function renderSuppliers(suppliers) {
                 <div class="detail-item">
                     <i class="fas fa-envelope detail-icon"></i>
                     <div>
-                        <div class="detail-label">Email</div>
+                        <div class="detail-label">Почта</div>
                         <div class="detail-text">${supplier.email}</div>
                     </div>
                 </div>
             `;
         }
         
-        if (supplier.products) {
+        if (supplier.equipment) {
             detailsHTML += `
                 <div class="detail-item">
-                    <i class="fas fa-box detail-icon"></i>
+                    <i class="fas fa-cogs detail-icon"></i>
                     <div>
-                        <div class="detail-label">Продукция</div>
-                        <div class="detail-text">${supplier.products}</div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        if (supplier.payment) {
-            detailsHTML += `
-                <div class="detail-item">
-                    <i class="fas fa-credit-card detail-icon"></i>
-                    <div>
-                        <div class="detail-label">Условия оплаты</div>
-                        <div class="detail-text">${supplier.payment}</div>
+                        <div class="detail-label">Оборудование</div>
+                        <div class="detail-text">${supplier.equipment}</div>
                     </div>
                 </div>
             `;
@@ -370,30 +381,22 @@ function handleSearch(e) {
     
     if (query.length === 0) {
         if (currentCategory) {
-            renderSuppliers(database[currentCategory]);
+            const suppliers = getSuppliersByCategory(currentCategory);
+            renderSuppliers(suppliers);
         } else {
             renderCategories();
         }
         return;
     }
 
+    const filtered = searchSuppliers(query);
+    
     if (currentCategory) {
-        const filtered = database[currentCategory].filter(supplier => 
-            supplier.name.toLowerCase().includes(query) ||
-            (supplier.contact && supplier.contact.toLowerCase().includes(query)) ||
-            (supplier.email && supplier.email.toLowerCase().includes(query)) ||
-            (supplier.products && supplier.products.toLowerCase().includes(query))
-        );
-        renderSuppliers(filtered);
+        // Search within current category
+        const categoryFiltered = filtered.filter(item => item.equipment === currentCategory);
+        renderSuppliers(categoryFiltered);
     } else {
-        const filtered = allSuppliers.filter(supplier => 
-            supplier.name.toLowerCase().includes(query) ||
-            (supplier.contact && supplier.contact.toLowerCase().includes(query)) ||
-            (supplier.email && supplier.email.toLowerCase().includes(query)) ||
-            (supplier.products && supplier.products.toLowerCase().includes(query)) ||
-            supplier.category.toLowerCase().includes(query)
-        );
-        
+        // Global search - show results in category view
         if (currentCategoryTitle) {
             currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
         }
