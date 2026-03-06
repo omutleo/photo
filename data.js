@@ -706,27 +706,6 @@ const database = [
         contact: "Менеджер",
         email: "sales@lite-mobile.ru",
         comments: "смартфоны, телефоны, ноутбуки, планшеты"
-    },
-    {
-        name: "ООО "УРМКС",
-        equipment: "Оборудование",
-        contact: "Фокин Дмитрий",
-        email: "d.fokin@urmks.ru",
-        comments: "шкаф лвж, лабораторная мебель, термошкафы"
-    },
-    {
-        name: "Промышленная мебель ESD",
-        equipment: "Оборудование",
-        contact: "Ксенофонтов Кирилл",
-        email: "zakaz@mebelesd.ru",
-        comments: "шкаф лвж, лабораторная мебель, термошкафы"
-    },
-    {
-        name: "ЗиМ",
-        equipment: "Оборудование",
-        contact: "Розова Надежда",
-        email: "zim@zimcom.ru",
-        comments: "блок ЛВЖ, модульные здания"
     }
 ];
 
