@@ -706,6 +706,13 @@ const database = [
         contact: "Менеджер",
         email: "sales@lite-mobile.ru",
         comments: "смартфоны, телефоны, ноутбуки, планшеты"
+    },
+    {
+        name: "dgrgdre",
+        equipment: "Оборудование",
+        contact: "Менеджер",
+        email: "sales@ldgrgrdbile.ru",
+        comments: "смартфоны, телефоны, ноутбуки, планшеты"
     }
 ];
 
