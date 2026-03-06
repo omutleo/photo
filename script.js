@@ -130,7 +130,7 @@ function handleLogin() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
     
-    if (username === 'admin' && password === 'admin') {
+    if (username === 'admin' && password === '20hyptec26') {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = 'index.html';
     } else {
