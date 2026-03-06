@@ -1,10 +1,11 @@
-// script.js - Основной функционал приложения
+// script.js - Основной функционал приложения с добавлением поставщиков
 
 // ============================================
 // STATE & DOM ELEMENTS
 // ============================================
 let currentCategory = null;
-let allSuppliers = database;
+let database = [];
+let userSuppliers = []; // Пользовательские добавленные записи
 
 // DOM Elements
 let loginScreen = null;
@@ -25,24 +26,57 @@ let totalCategoriesEl = null;
 let loginModal = null;
 let loginFormModal = null;
 let loginErrorModal = null;
+let addSupplierBtn = null;
+let addSupplierModal = null;
+let addSupplierForm = null;
+let modalClose = null;
+let modalCancel = null;
+let exportBtn = null;
+let importBtn = null;
+let importModal = null;
+let importConfirm = null;
+let importCancel = null;
+let notification = null;
 
 // ============================================
 // INITIALIZATION
 // ============================================
 document.addEventListener('DOMContentLoaded', function() {
+    // Load database from localStorage or use default
+    loadDatabase();
+    
     // Check which page we're on and initialize accordingly
     loginScreen = document.getElementById('login-screen');
     appScreen = document.getElementById('app-screen');
     loginModal = document.getElementById('login-modal');
     
     if (loginScreen) {
-        // We're on login.html
         initLoginPage();
     } else if (appScreen) {
-        // We're on index.html
         initAppPage();
     }
 });
+
+function loadDatabase() {
+    // Load default database
+    database = JSON.parse(JSON.stringify(defaultDatabase));
+    
+    // Load user-added suppliers from localStorage
+    const storedUserSuppliers = localStorage.getItem('htec_user_suppliers');
+    if (storedUserSuppliers) {
+        try {
+            userSuppliers = JSON.parse(storedUserSuppliers);
+            database = database.concat(userSuppliers);
+        } catch (e) {
+            console.error('Error loading user suppliers:', e);
+            userSuppliers = [];
+        }
+    }
+}
+
+function saveUserSuppliers() {
+    localStorage.setItem('htec_user_suppliers', JSON.stringify(userSuppliers));
+}
 
 // ============================================
 // LOGIN PAGE INITIALIZATION
@@ -60,7 +94,6 @@ function initLoginPage() {
         });
     }
     
-    // Check if already logged in
     checkAuth();
 }
 
@@ -80,11 +113,18 @@ function initAppPage() {
     backToDashboard = document.getElementById('back-to-dashboard');
     totalSuppliersEl = document.getElementById('total-suppliers');
     totalCategoriesEl = document.getElementById('total-categories');
-    loginModal = document.getElementById('login-modal');
-    loginFormModal = document.getElementById('login-form-modal');
-    loginErrorModal = document.getElementById('login-error-modal');
+    addSupplierBtn = document.getElementById('add-supplier-btn');
+    addSupplierModal = document.getElementById('add-supplier-modal');
+    addSupplierForm = document.getElementById('add-supplier-form');
+    modalClose = document.getElementById('modal-close');
+    modalCancel = document.getElementById('modal-cancel');
+    exportBtn = document.getElementById('export-btn');
+    importBtn = document.getElementById('import-btn');
+    importModal = document.getElementById('import-modal');
+    importConfirm = document.getElementById('import-confirm');
+    importCancel = document.getElementById('import-cancel');
+    notification = document.getElementById('notification');
     
-    // Check authentication
     const isLoggedIn = sessionStorage.getItem('isLoggedIn');
     
     if (isLoggedIn === 'true') {
@@ -106,12 +146,52 @@ function initAppPage() {
         globalSearch.addEventListener('input', handleSearch);
     }
     
-    if (loginFormModal) {
-        loginFormModal.addEventListener('submit', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleLoginModal();
-            return false;
+    if (addSupplierBtn) {
+        addSupplierBtn.addEventListener('click', openAddSupplierModal);
+    }
+    
+    if (modalClose) {
+        modalClose.addEventListener('click', closeAddSupplierModal);
+    }
+    
+    if (modalCancel) {
+        modalCancel.addEventListener('click', closeAddSupplierModal);
+    }
+    
+    if (addSupplierForm) {
+        addSupplierForm.addEventListener('submit', handleAddSupplier);
+    }
+    
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportDatabase);
+    }
+    
+    if (importBtn) {
+        importBtn.addEventListener('click', openImportModal);
+    }
+    
+    if (importConfirm) {
+        importConfirm.addEventListener('click', confirmImport);
+    }
+    
+    if (importCancel) {
+        importCancel.addEventListener('click', closeImportModal);
+    }
+    
+    // Close modal on outside click
+    if (addSupplierModal) {
+        addSupplierModal.addEventListener('click', function(e) {
+            if (e.target === addSupplierModal) {
+                closeAddSupplierModal();
+            }
+        });
+    }
+    
+    if (importModal) {
+        importModal.addEventListener('click', function(e) {
+            if (e.target === importModal) {
+                closeImportModal();
+            }
         });
     }
 }
@@ -130,7 +210,7 @@ function handleLogin() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
     
-    if (username === 'admin' && password === '20hyptec26') {
+    if (username === 'admin' && password === 'admin') {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = 'index.html';
     } else {
@@ -138,26 +218,6 @@ function handleLogin() {
             loginError.style.display = 'block';
             setTimeout(() => {
                 loginError.style.display = 'none';
-            }, 3000);
-        }
-    }
-}
-
-function handleLoginModal() {
-    const username = document.getElementById('username-modal').value.trim();
-    const password = document.getElementById('password-modal').value.trim();
-    
-    if (username === 'admin' && password === '20hyptec26') {
-        sessionStorage.setItem('isLoggedIn', 'true');
-        if (loginModal) {
-            loginModal.classList.add('hidden');
-        }
-        showApp();
-    } else {
-        if (loginErrorModal) {
-            loginErrorModal.style.display = 'block';
-            setTimeout(() => {
-                loginErrorModal.style.display = 'none';
             }, 3000);
         }
     }
@@ -188,19 +248,18 @@ function showApp() {
         appScreen.classList.remove('hidden');
     }
     
-    // Get unique categories
-    const categories = getUniqueCategories();
-    
-    // Update stats
+    updateStats();
+    renderCategories();
+}
+
+function updateStats() {
     if (totalSuppliersEl) {
-        totalSuppliersEl.textContent = allSuppliers.length;
+        totalSuppliersEl.textContent = database.length;
     }
     if (totalCategoriesEl) {
+        const categories = getUniqueCategories();
         totalCategoriesEl.textContent = categories.length;
     }
-    
-    // Render categories
-    renderCategories();
 }
 
 function showDashboard() {
@@ -215,15 +274,7 @@ function showDashboard() {
         globalSearch.value = '';
     }
     
-    // Update stats
-    const categories = getUniqueCategories();
-    if (totalSuppliersEl) {
-        totalSuppliersEl.textContent = allSuppliers.length;
-    }
-    if (totalCategoriesEl) {
-        totalCategoriesEl.textContent = categories.length;
-    }
-    
+    updateStats();
     renderCategories();
 }
 
@@ -245,6 +296,172 @@ function showCategory(categoryName) {
     }
     
     renderSuppliers(suppliers);
+}
+
+// ============================================
+// ADD SUPPLIER MODAL FUNCTIONS
+// ============================================
+function openAddSupplierModal() {
+    if (addSupplierModal) {
+        addSupplierModal.classList.remove('hidden');
+    }
+    if (addSupplierForm) {
+        addSupplierForm.reset();
+    }
+}
+
+function closeAddSupplierModal() {
+    if (addSupplierModal) {
+        addSupplierModal.classList.add('hidden');
+    }
+    if (addSupplierForm) {
+        addSupplierForm.reset();
+    }
+}
+
+function handleAddSupplier(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('supplier-name').value.trim();
+    const equipment = document.getElementById('supplier-equipment').value;
+    const contact = document.getElementById('supplier-contact').value.trim();
+    const email = document.getElementById('supplier-email').value.trim();
+    const comments = document.getElementById('supplier-comments').value.trim();
+    
+    if (!name || !equipment) {
+        showNotification('Заполните обязательные поля!', 'error');
+        return;
+    }
+    
+    const newSupplier = {
+        name: name,
+        equipment: equipment,
+        contact: contact,
+        email: email,
+        comments: comments,
+        dateAdded: new Date().toISOString()
+    };
+    
+    // Add to user suppliers
+    userSuppliers.push(newSupplier);
+    
+    // Add to main database
+    database.push(newSupplier);
+    
+    // Save to localStorage
+    saveUserSuppliers();
+    
+    // Show success notification
+    showNotification('Поставщик успешно добавлен!', 'success');
+    
+    // Close modal
+    closeAddSupplierModal();
+    
+    // Refresh view
+    if (currentCategory) {
+        showCategory(currentCategory);
+    } else {
+        updateStats();
+        renderCategories();
+    }
+}
+
+// ============================================
+// EXPORT/IMPORT FUNCTIONS
+// ============================================
+function exportDatabase() {
+    const dataStr = JSON.stringify(database, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(dataBlob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `htec_database_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+    
+    showNotification('База данных экспортирована!', 'success');
+}
+
+function openImportModal() {
+    if (importModal) {
+        importModal.classList.remove('hidden');
+    }
+}
+
+function closeImportModal() {
+    if (importModal) {
+        importModal.classList.add('hidden');
+    }
+    const fileInput = document.getElementById('import-file');
+    if (fileInput) {
+        fileInput.value = '';
+    }
+}
+
+function confirmImport() {
+    const fileInput = document.getElementById('import-file');
+    if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+        showNotification('Выберите файл для импорта!', 'error');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const importedData = JSON.parse(e.target.result);
+            
+            if (!Array.isArray(importedData)) {
+                throw new Error('Неверный формат файла');
+            }
+            
+            // Validate data structure
+            for (let item of importedData) {
+                if (!item.name || !item.equipment) {
+                    throw new Error('Неверный формат данных');
+                }
+            }
+            
+            // Replace database
+            database = importedData;
+            userSuppliers = [];
+            
+            // Save to localStorage
+            saveUserSuppliers();
+            
+            showNotification('База данных успешно импортирована!', 'success');
+            closeImportModal();
+            updateStats();
+            renderCategories();
+            
+        } catch (error) {
+            showNotification('Ошибка импорта: ' + error.message, 'error');
+        }
+    };
+    
+    reader.onerror = function() {
+        showNotification('Ошибка чтения файла!', 'error');
+    };
+    
+    reader.readAsText(file);
+}
+
+// ============================================
+// NOTIFICATION FUNCTION
+// ============================================
+function showNotification(message, type = 'success') {
+    if (!notification) return;
+    
+    notification.textContent = message;
+    notification.className = 'notification ' + type;
+    notification.classList.remove('hidden');
+    
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 3000);
 }
 
 // ============================================
@@ -318,6 +535,17 @@ function renderSuppliers(suppliers) {
     suppliers.forEach((supplier, index) => {
         const item = document.createElement('div');
         item.className = 'supplier-item';
+        
+        // Mark new items
+        if (supplier.dateAdded) {
+            const dateAdded = new Date(supplier.dateAdded);
+            const now = new Date();
+            const hoursDiff = (now - dateAdded) / (1000 * 60 * 60);
+            if (hoursDiff < 24) {
+                item.classList.add('new-item');
+            }
+        }
+        
         item.style.animationDelay = `${index * 0.05}s`;
         
         let detailsHTML = '';
@@ -358,7 +586,6 @@ function renderSuppliers(suppliers) {
             `;
         }
         
-        // Кнопка копирования email (если email есть)
         const copyBtn = supplier.email ? 
             `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email">
                 <i class="fas fa-copy"></i> Копировать
@@ -375,7 +602,7 @@ function renderSuppliers(suppliers) {
         suppliersContainer.appendChild(item);
     });
     
-    // Добавляем обработчики событий на кнопки копирования
+    // Add event listeners to copy buttons
     document.querySelectorAll('.copy-email-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -389,16 +616,13 @@ function renderSuppliers(suppliers) {
 // COPY TO CLIPBOARD FUNCTION
 // ============================================
 function copyToClipboard(text, button) {
-    // Используем Clipboard API
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(() => {
             showCopyNotification(button, 'Email скопирован!');
         }).catch(err => {
-            // Fallback для старых браузеров
             fallbackCopyToClipboard(text, button);
         });
     } else {
-        // Fallback для старых браузеров
         fallbackCopyToClipboard(text, button);
     }
 }
@@ -424,12 +648,10 @@ function fallbackCopyToClipboard(text, button) {
 }
 
 function showCopyNotification(button, message, isError = false) {
-    // Создаем уведомление
     const notification = document.createElement('div');
     notification.className = 'copy-notification' + (isError ? ' error' : '');
     notification.textContent = message;
     
-    // Позиционируем рядом с кнопкой
     const rect = button.getBoundingClientRect();
     notification.style.position = 'fixed';
     notification.style.left = rect.left + 'px';
@@ -438,12 +660,10 @@ function showCopyNotification(button, message, isError = false) {
     
     document.body.appendChild(notification);
     
-    // Анимация появления
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
     
-    // Удаляем через 2 секунды
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => {
@@ -471,11 +691,9 @@ function handleSearch(e) {
     const filtered = searchSuppliers(query);
     
     if (currentCategory) {
-        // Search within current category
         const categoryFiltered = filtered.filter(item => item.equipment === currentCategory);
         renderSuppliers(categoryFiltered);
     } else {
-        // Global search - show results in category view
         if (currentCategoryTitle) {
             currentCategoryTitle.textContent = `Результаты поиска: "${query}"`;
         }
