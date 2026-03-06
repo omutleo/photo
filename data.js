@@ -708,11 +708,25 @@ const database = [
         comments: "смартфоны, телефоны, ноутбуки, планшеты"
     },
     {
-        name: "dgrgdre",
+        name: "ООО УРМКС",
         equipment: "Оборудование",
-        contact: "Менеджер",
-        email: "sales@ldgrgrdbile.ru",
-        comments: "смартфоны, телефоны, ноутбуки, планшеты"
+        contact: "Фокин Дмитрий",
+        email: "d.fokin@urmks.ru",
+        comments: "шкаф лвж, лабораторная мебель, термошкафы"
+    },
+    {
+        name: "Промышленная мебель ESD",
+        equipment: "Оборудование",
+        contact: "Ксенофонтов Кирилл",
+        email: "zakaz@mebelesd.ru",
+        comments: "шкаф лвж, лабораторная мебель, термошкафы"
+    },
+    {
+        name: "ЗиМ",
+        equipment: "Оборудование",
+        contact: "Розова Надежда",
+        email: "zim@zimcom.ru",
+        comments: "блок ЛВЖ, модульные здания"
     }
 ];
 
