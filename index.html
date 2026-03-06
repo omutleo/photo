@@ -19,9 +19,14 @@
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" class="search-input" id="global-search" placeholder="Поиск поставщика, оборудования, контактов...">
                 </div>
-                <button class="btn btn-secondary" id="logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Выход
-                </button>
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="add-supplier-btn">
+                        <i class="fas fa-plus"></i> Добавить
+                    </button>
+                    <button class="btn btn-secondary" id="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Выход
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -37,6 +42,14 @@
                     <div class="stat-item">
                         <span class="stat-number" id="total-categories">0</span>
                         <span class="stat-label">Категорий</span>
+                    </div>
+                    <div class="stat-item">
+                        <button class="btn btn-secondary btn-small" id="export-btn">
+                            <i class="fas fa-download"></i> Экспорт
+                        </button>
+                        <button class="btn btn-secondary btn-small" id="import-btn">
+                            <i class="fas fa-upload"></i> Импорт
+                        </button>
                     </div>
                 </div>
                 <h2 class="section-title">Категории оборудования</h2>
@@ -63,27 +76,76 @@
         </footer>
     </div>
 
-    <!-- Login modal for index.html if accessed directly -->
-    <div id="login-modal" class="login-modal hidden">
-        <div class="login-card">
-            <span class="login-logo">
-                <span class="logo-h">H</span><span class="logo-tec">Tec</span>
-            </span>
-            <h2 class="login-title">Вход в систему</h2>
-            <form id="login-form-modal">
+    <!-- ADD SUPPLIER MODAL -->
+    <div id="add-supplier-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Добавить поставщика</h2>
+                <button class="modal-close" id="modal-close">&times;</button>
+            </div>
+            <form id="add-supplier-form">
                 <div class="form-group">
-                    <label for="username-modal">Логин</label>
-                    <input type="text" id="username-modal" placeholder="admin" required autocomplete="username">
+                    <label for="supplier-name">Наименование поставщика *</label>
+                    <input type="text" id="supplier-name" required placeholder="ООО 'Пример'">
                 </div>
                 <div class="form-group">
-                    <label for="password-modal">Пароль</label>
-                    <input type="password" id="password-modal" placeholder="admin" required autocomplete="current-password">
+                    <label for="supplier-equipment">Оборудование (Категория) *</label>
+                    <select id="supplier-equipment" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="Техника автоматизации">Техника автоматизации</option>
+                        <option value="Оснащение лабораторий">Оснащение лабораторий</option>
+                        <option value="Хим реактивы">Хим реактивы</option>
+                        <option value="Запчасти">Запчасти</option>
+                        <option value="Оборудование">Оборудование</option>
+                        <option value="Масло">Масло</option>
+                        <option value="Уплотнения">Уплотнения</option>
+                    </select>
                 </div>
-                <button type="submit" class="btn btn-primary btn-full">Войти</button>
+                <div class="form-group">
+                    <label for="supplier-contact">Контактное лицо</label>
+                    <input type="text" id="supplier-contact" placeholder="Иванов Иван 8-900-000-00-00">
+                </div>
+                <div class="form-group">
+                    <label for="supplier-email">Почта</label>
+                    <input type="email" id="supplier-email" placeholder="info@example.ru">
+                </div>
+                <div class="form-group">
+                    <label for="supplier-comments">Комментарии (слова для поиска)</label>
+                    <textarea id="supplier-comments" rows="4" placeholder="Бренды, продукция, ключевые слова для поиска..."></textarea>
+                    <small class="form-hint">Эти данные не отображаются на сайте, но участвуют в поиске</small>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="modal-cancel">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
             </form>
-            <p id="login-error-modal" class="error-message">Неверный логин или пароль</p>
         </div>
     </div>
+
+    <!-- IMPORT MODAL -->
+    <div id="import-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Импорт базы данных</h2>
+                <button class="modal-close" id="import-modal-close">&times;</button>
+            </div>
+            <div class="form-group">
+                <label for="import-file">Выберите файл базы (JSON)</label>
+                <input type="file" id="import-file" accept=".json">
+                <small class="form-hint">Внимание! Это заменит текущую базу данных.</small>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="import-cancel">Отмена</button>
+                <button type="button" class="btn btn-primary" id="import-confirm">Импортировать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div id="notification" class="notification hidden"></div>
+
+    <!-- Hidden file input for import -->
+    <input type="file" id="file-input" accept=".json" class="hidden">
 
     <script src="data.js"></script>
     <script src="script.js"></script>
