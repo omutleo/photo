@@ -580,3 +580,69 @@ body {
     outline: 3px solid var(--primary-orange);
     outline-offset: 2px;
 }
+.copy-email-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--primary-orange);
+    color: var(--white);
+    padding: 12px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: var(--transition);
+    margin-top: 20px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.copy-email-btn:hover {
+    background-color: var(--primary-orange-hover);
+    transform: translateY(-2px);
+}
+
+.copy-email-btn:active {
+    transform: translateY(0);
+}
+
+.copy-email-btn i {
+    font-size: 1rem;
+}
+
+/* =========================================
+   COPY NOTIFICATION STYLES
+   ========================================= */
+.copy-notification {
+    background-color: var(--dark-grey);
+    color: var(--white);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-left: 4px solid var(--primary-orange);
+}
+
+.copy-notification.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.copy-notification.error {
+    background-color: #dc3545;
+    border-left-color: #c82333;
+}
+
+/* =========================================
+   RESPONSIVE FOR COPY BUTTON
+   ========================================= */
+@media (max-width: 480px) {
+    .copy-email-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
