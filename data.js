@@ -708,7 +708,7 @@ const database = [
         comments: "смартфоны, телефоны, ноутбуки, планшеты"
     },
     {
-        name: "ООО "УРМКС"",
+        name: "ООО "УРМКС",
         equipment: "Оборудование",
         contact: "Фокин Дмитрий",
         email: "d.fokin@urmks.ru",
