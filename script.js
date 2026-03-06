@@ -130,7 +130,7 @@ function handleLogin() {
     const username = document.getElementById('username').value.trim();
     const password = document.getElementById('password').value.trim();
     
-    if (username === 'admin' && password === '20hyptec26') {
+    if (username === 'admin' && password === 'admin') {
         sessionStorage.setItem('isLoggedIn', 'true');
         window.location.href = 'index.html';
     } else {
@@ -147,7 +147,7 @@ function handleLoginModal() {
     const username = document.getElementById('username-modal').value.trim();
     const password = document.getElementById('password-modal').value.trim();
     
-    if (username === 'admin' && password === '20hyptec26') {
+    if (username === 'admin' && password === 'admin') {
         sessionStorage.setItem('isLoggedIn', 'true');
         if (loginModal) {
             loginModal.classList.add('hidden');
@@ -358,19 +358,98 @@ function renderSuppliers(suppliers) {
             `;
         }
         
-        const contactBtn = supplier.email ? 
-            `<a href="mailto:${supplier.email}" class="contact-btn"><i class="fas fa-envelope"></i> Написать</a>` : '';
+        // Кнопка копирования email (если email есть)
+        const copyBtn = supplier.email ? 
+            `<button class="copy-email-btn" data-email="${supplier.email}" title="Копировать email">
+                <i class="fas fa-copy"></i> Копировать
+            </button>` : '';
         
         item.innerHTML = `
             <div class="supplier-name">${supplier.name}</div>
             <div class="supplier-details">
                 ${detailsHTML}
             </div>
-            ${contactBtn}
+            ${copyBtn}
         `;
         
         suppliersContainer.appendChild(item);
     });
+    
+    // Добавляем обработчики событий на кнопки копирования
+    document.querySelectorAll('.copy-email-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const email = this.getAttribute('data-email');
+            copyToClipboard(email, this);
+        });
+    });
+}
+
+// ============================================
+// COPY TO CLIPBOARD FUNCTION
+// ============================================
+function copyToClipboard(text, button) {
+    // Используем Clipboard API
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            showCopyNotification(button, 'Email скопирован!');
+        }).catch(err => {
+            // Fallback для старых браузеров
+            fallbackCopyToClipboard(text, button);
+        });
+    } else {
+        // Fallback для старых браузеров
+        fallbackCopyToClipboard(text, button);
+    }
+}
+
+function fallbackCopyToClipboard(text, button) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showCopyNotification(button, 'Email скопирован!');
+    } catch (err) {
+        showCopyNotification(button, 'Ошибка копирования', true);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+function showCopyNotification(button, message, isError = false) {
+    // Создаем уведомление
+    const notification = document.createElement('div');
+    notification.className = 'copy-notification' + (isError ? ' error' : '');
+    notification.textContent = message;
+    
+    // Позиционируем рядом с кнопкой
+    const rect = button.getBoundingClientRect();
+    notification.style.position = 'fixed';
+    notification.style.left = rect.left + 'px';
+    notification.style.top = (rect.bottom + 10) + 'px';
+    notification.style.zIndex = '10000';
+    
+    document.body.appendChild(notification);
+    
+    // Анимация появления
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // Удаляем через 2 секунды
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 2000);
 }
 
 // ============================================
